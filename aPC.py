@@ -1,10 +1,11 @@
 import itertools
 import numpy as np
 import matplotlib.pyplot as plt
+from testFun import testFun
 
 """ 
 Arbitrary Polynomial Chaos: instead of using polynomials that depends on the distributions 
-of respective input variables, we compute the polynomial basis from the raw momements of the 
+of respective input variables, we compute the polynomial coefficients from the raw momements of the 
 data that is actually used. Once the PC expansion is done we feed it with more data from 
 the different distributions.
 """
@@ -83,9 +84,6 @@ def polyCoeff(rMom, k):
 
 	return p
 
-def testFun(x, y, z):
-	return 3*x**2+z*y+z*2
-
 def computeQ(NQ, k, M, R, U):
 	"""Computes the coeffcients for the terms in the PC expansion
 
@@ -156,7 +154,7 @@ M = 3
 D = np.loadtxt('np.csv', dtype='float', delimiter=',', usecols=(0, 1, 2), unpack=False, skiprows=1)
 
 NQ = 100 # size of actual simulations performed i.e. input data and output data
-idx = np.random.randint(len(D), size=NQ)
+idx = np.random.randint(len(D), size=NQ) # select NQ rows from the simulated data D
 R = D[idx,:] #the actual input data used in the test function.
 
 # Our output vector containing result from simulations of D1-D3
