@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 def polynomial_creator(*coefficients):
 
@@ -40,3 +41,6 @@ m2 = monomial_creator(*p) #the * is for unpacking list into functions
 print(p1(2)*p2(2)*p3(2)) 
 print(m1(2,2,2)) 
 print(m2(2,2,2))
+
+plt.plot(2,2)
+plt.show()
