@@ -9,10 +9,6 @@ def polynomial_creator(*coefficients):
 		return res
 	return polynomial
 
-p1 = polynomial_creator(3,2,1,4)
-p2 = polynomial_creator(2,1,0)
-p3 = polynomial_creator(2,3)
-
 def monomial_creator(*p):
 
 	def monomial(*var):
@@ -23,7 +19,24 @@ def monomial_creator(*p):
 
 	return monomial
 
-m1 = monomial_creator(p1, p2, p3)
+coeff = []
 
-print(p1(2)*p2(2)*p3(2)) # 43, 4
-print(m1(2,2,2)) # 172
+p1 = polynomial_creator(*[3,2,1,4])
+p2 = polynomial_creator(*[2,1,0])
+p3 = polynomial_creator(*[2,3])
+
+coeff.append([3,2,1,4]) 
+coeff.append([2,1,0])
+coeff.append([2,3])
+
+p = []
+
+for i in range(len(coeff)):
+    p.append(polynomial_creator(*coeff[i])) #the * is for unpacking arrays
+
+m1 = monomial_creator(p1, p2, p3)
+m2 = monomial_creator(*p) #the * is for unpacking list into functions
+
+print(p1(2)*p2(2)*p3(2)) 
+print(m1(2,2,2)) 
+print(m2(2,2,2))
