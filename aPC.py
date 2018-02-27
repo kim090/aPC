@@ -49,7 +49,7 @@ def polyCoeff(rMom, k):
 	b[-1]=1
 
 	p = np.linalg.solve(mu,b)
-	p = np.flip(p,0) # leading coefficients in polynomial is 1
+	#p = np.flip(p,0) # leading coefficients in polynomial is 1
 
 	return p
 

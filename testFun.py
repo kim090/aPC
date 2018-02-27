@@ -1,2 +1,2 @@
 def testFun(x, y, z):
-	return 3*x**2+z*y+z*2
+	return x*y*z**3+x**5+y**2

@@ -1,5 +1,8 @@
 import numpy as np
+from aPC import rawMoments, polyCoeff
+from computeSets import allSets
 import matplotlib.pyplot as plt
+from beam_func import beam_func
 
 def polynomial_creator(*coefficients):
 
@@ -20,27 +23,55 @@ def monomial_creator(*p):
 
 	return monomial
 
-coeff = []
+D = np.loadtxt('np.csv', dtype='float', delimiter=',', usecols=(0, 1, 2), unpack=False, skiprows=1)
 
-p1 = polynomial_creator(*[3,2,1,4])
-p2 = polynomial_creator(*[2,1,0])
-p3 = polynomial_creator(*[2,3])
+k=3
+M=3
 
-coeff.append([3,2,1,4]) 
-coeff.append([2,1,0])
-coeff.append([2,3])
+NQ = 1000 # size of actual simulations performed i.e. input data and output data
+idx = np.random.randint(len(D), size=NQ) # select NQ rows from the simulated data D
+R = D[idx,:] #the actual input data used in the test function.
+U = beam_func(R[:,0], R[:,1], R[:,2])
 
-p = []
+aSets = allSets(k,M)
+m = []
 
-for i in range(len(coeff)):
-    p.append(polynomial_creator(*coeff[i])) #the * is for unpacking arrays
+for i in range(len(aSets)):
+    coeff = []
+    for j in range(M):
+        coeff.append(polyCoeff(rawMoments(R[:,j], aSets[i][j]), aSets[i][j]))
+        
+    p = []
 
-m1 = monomial_creator(p1, p2, p3)
-m2 = monomial_creator(*p) #the * is for unpacking list into functions
+    for c in range(len(coeff)):
+        p.append(polynomial_creator(*coeff[c])) #the * is for unpacking arrays
+    
+    m.append(monomial_creator(*p))
 
-print(p1(2)*p2(2)*p3(2)) 
-print(m1(2,2,2)) 
-print(m2(2,2,2))
 
-plt.plot(2,2)
+# create Q vector    
+Q = np.zeros((R.shape[0], len(m)))
+
+for i in range(len(m)):
+    for j in range(R.shape[0]):
+        Q[j,i]=(m[i](*R[j,:]))    
+
+#compute C coeff for the PCE
+A = np.dot(Q.T,Q)
+b = np.dot(Q.T, U)
+C = np.linalg.solve(A,b)
+
+#evaluate PCE at D
+PCE = np.zeros((D.shape[0],len(m)))
+
+for i in range(len(m)):
+    for j in range(D.shape[0]):
+        PCE[j,i]=(C[i]*m[i](*D[j,:])) 
+        
+pce = sum(PCE.T)
+
+plt.hist(pce, bins=100, normed=True)
+plt.hist(beam_func(D[:,0], D[:,1], D[:,2]), bins=100, normed=True)
+labels= ["aPCnew","True"]
+plt.legend(labels)
 plt.show()
